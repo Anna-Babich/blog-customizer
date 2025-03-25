@@ -1,7 +1,7 @@
 import { ArrowButton } from 'src/ui/arrow-button';
 import { Button } from 'src/ui/button';
 import { Select } from 'src/ui/select';
-import { useState, useRef, SyntheticEvent } from 'react';
+import { useState, useRef, ElementType } from 'react';
 import { fontFamilyOptions, fontColors, fontSizeOptions, backgroundColors, contentWidthArr, defaultArticleState, ArticleStateType, OptionType } from '../../constants/articleProps';
 import { RadioGroup } from 'src/ui/radio-group';
 import { Text } from 'src/ui/text';
@@ -9,48 +9,52 @@ import { Separator } from 'src/ui/separator';
 import { useOutsideClickClose } from '../../ui/select/hooks/useOutsideClickClose';
 import clsx from 'clsx';
 
+
 import styles from './ArticleParamsForm.module.scss';
 
 type ArticleParamsForm = {
-	state: ArticleStateType
-	setState: (data: ArticleStateType) => void
+	stateArticleParamsForm: ArticleStateType;
+	setParamsFormState: (data: ArticleStateType) => void;
+	articalParamsFormTitle: string;
+	as: ElementType;
 }
 
-export const ArticleParamsForm = ({state, setState}: ArticleParamsForm) => {
-	
+export const ArticleParamsForm = ({stateArticleParamsForm, setParamsFormState, articalParamsFormTitle, as}: ArticleParamsForm) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const rootRef = useRef<HTMLDivElement>(null);
-
-	const [selectState, setSelectState] = useState<ArticleStateType>(state);
-	const handeleChangeSelectedState = (key: keyof ArticleStateType, value: OptionType) => {
-		setSelectState({...selectState, [key]: value});
-	}
-
-	const handleSubmitStateArtical = (event: SyntheticEvent) => {
-		event.preventDefault();
-		setState(selectState);
-	}
-
-	const handleResetStateArtical = (event: SyntheticEvent) => {
-		setSelectState(state);
-	}
-
+	//хук для закрытия сайдбара при клике на оверлей
 	useOutsideClickClose({
 		isOpen,
 		rootRef,
 		onChange: setIsOpen,
 	})
 
+	const [selectParamsState, setSelectParamsState] = useState<ArticleStateType>(stateArticleParamsForm);
+	const handeleChangeSelectedState = (key: keyof ArticleStateType, value: OptionType) => {
+		setSelectParamsState({...selectParamsState, [key]: value});
+	}
+
+	const handleSubmitStateArtical = (event: React.FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+		setParamsFormState(selectParamsState);
+	}
+
+	const handleResetStateArtical = (event: React.FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+		setParamsFormState(defaultArticleState);
+		setSelectParamsState(defaultArticleState);
+	}
+
 	return (
 		<>
 			<ArrowButton isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
 			<aside className={clsx(styles.container, isOpen && styles.container_open)} ref={rootRef} >
 				<form className={styles.form} onSubmit={handleSubmitStateArtical} onReset={handleResetStateArtical}>
-					<Text size={31} weight={800} uppercase>
-							<h2>Задайте параметры</h2>
+					<Text as={as} size={31} weight={800} uppercase>
+						{articalParamsFormTitle}
 					</Text>
 					<Select 
-						selected={selectState.fontFamilyOption} 
+						selected={selectParamsState.fontFamilyOption} 
 						options={fontFamilyOptions}
 						onChange={(options) => handeleChangeSelectedState('fontFamilyOption', options)}
 						title={'шрифты'} 
@@ -58,12 +62,12 @@ export const ArticleParamsForm = ({state, setState}: ArticleParamsForm) => {
 					<RadioGroup 
 						name={'radio'} 
 						options={fontSizeOptions} 
-						selected={selectState.fontSizeOption}
+						selected={selectParamsState.fontSizeOption}
 						onChange={(options) => handeleChangeSelectedState('fontSizeOption', options)}
 						title={'размер шрифта'} 
 					/>
 					<Select 
-						selected={selectState.fontColor} 
+						selected={selectParamsState.fontColor} 
 						options={fontColors}
 						onChange={(options) => handeleChangeSelectedState('fontColor', options)}
 						title={'цвет шрифта'}
@@ -72,13 +76,13 @@ export const ArticleParamsForm = ({state, setState}: ArticleParamsForm) => {
 					<Separator />
 
 					<Select 
-						selected={selectState.backgroundColor} 
+						selected={selectParamsState.backgroundColor} 
 						options={backgroundColors}
 						onChange={(options) => handeleChangeSelectedState('backgroundColor', options)}
 						title={'Цвет фона'} 
 					/>
 					<Select 
-						selected={selectState.contentWidth} 
+						selected={selectParamsState.contentWidth} 
 						options={contentWidthArr}
 						onChange={(options) => handeleChangeSelectedState('contentWidth', options)}
 						title={'Ширина контента'} 
