@@ -20,7 +20,7 @@ import clsx from 'clsx';
 
 import styles from './ArticleParamsForm.module.scss';
 
-type TArticleParamsForm = {
+type ArticleParamsFormProps = {
 	stateArticleParamsForm: ArticleStateType;
 	setParamsFormState: (data: ArticleStateType) => void;
 	articalParamsFormTitle: string;
@@ -32,7 +32,7 @@ export const ArticleParamsForm = ({
 	setParamsFormState,
 	articalParamsFormTitle,
 	as,
-}: TArticleParamsForm) => {
+}: ArticleParamsFormProps) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const rootRef = useRef<HTMLDivElement>(null);
 	//хук для закрытия сайдбара при клике на оверлей
