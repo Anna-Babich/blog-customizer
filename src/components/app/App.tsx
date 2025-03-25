@@ -1,6 +1,6 @@
 import { CSSProperties, useState } from 'react';
 import { Article } from '../article/Article';
-import { ArticleParamsForm } from '../article-params-form/ArticleParamsForm';
+import { ArticleParamsForm } from '../article-params-form';
 import {
 	ArticleStateType,
 	defaultArticleState,
